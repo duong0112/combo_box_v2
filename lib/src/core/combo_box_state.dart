@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../models/combo_box_item_model.dart';
 import 'overlay_manager.dart';
 
-class ComboBoxState<T> {
+class ComboBoxState {
   final LayerLink layerLink = LayerLink();
 
   final FocusNode focusNode =
@@ -23,7 +24,7 @@ class ComboBoxState<T> {
   overlayManager =
   OverlayManager();
 
-  List<T> filteredItems = [];
+  List<ComboBoxItemModel> filteredItems = [];
 
   bool loading = false;
 

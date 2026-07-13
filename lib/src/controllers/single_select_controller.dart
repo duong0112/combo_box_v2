@@ -1,17 +1,18 @@
 import 'package:flutter/foundation.dart';
 
+import '../models/combo_box_item_model.dart';
 import 'combo_box_controller.dart';
 
-class SingleSelectController<T>
+class SingleSelectController
     extends ChangeNotifier
     implements ComboBoxController {
   bool _isOpen = false;
 
-  T? _value;
+  ComboBoxItemModel? _value;
 
   bool get hasValue => _value != null;
 
-  T? get value => _value;
+  ComboBoxItemModel? get value => _value;
 
   @override
   bool get isOpen => _isOpen;
@@ -34,7 +35,7 @@ class SingleSelectController<T>
     notifyListeners();
   }
 
-  void select(T item) {
+  void select(ComboBoxItemModel item) {
     _value = item;
     notifyListeners();
   }

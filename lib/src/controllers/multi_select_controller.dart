@@ -1,36 +1,35 @@
 import 'package:flutter/foundation.dart';
 
+import '../models/combo_box_item_model.dart';
 import 'combo_box_controller.dart';
 
-class MultiSelectController<T>
-    extends ChangeNotifier
-    implements ComboBoxController {
+class MultiSelectController extends ChangeNotifier implements ComboBoxController {
   bool _isOpen = false;
 
-  final Set<T> _selectedItems = {};
+  final Set<ComboBoxItemModel> _selectedItems = {};
 
   @override
   bool get isOpen => _isOpen;
 
-  List<T> get values => _selectedItems.toList();
+  List<ComboBoxItemModel> get values => _selectedItems.toList();
 
-  bool contains(T item) {
+  bool contains(ComboBoxItemModel item) {
     return _selectedItems.contains(item);
   }
 
-  void select(T item) {
+  void select(ComboBoxItemModel item) {
     _selectedItems.add(item);
 
     notifyListeners();
   }
 
-  void unSelect(T item) {
+  void unSelect(ComboBoxItemModel item) {
     _selectedItems.remove(item);
 
     notifyListeners();
   }
 
-  void toggleItem(T item) {
+  void toggleItem(ComboBoxItemModel item) {
     if (_selectedItems.contains(item)) {
       _selectedItems.remove(item);
     } else {

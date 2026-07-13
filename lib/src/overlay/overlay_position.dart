@@ -21,36 +21,21 @@ class OverlayPosition {
     required RenderBox target,
     double dropdownHeight = 300,
   }) {
-    final screenHeight =
-        MediaQuery.sizeOf(context).height;
+    final screenHeight = MediaQuery.sizeOf(context).height;
 
     final size = target.size;
 
-    final position =
-    target.localToGlobal(
-      Offset.zero,
-    );
+    final position = target.localToGlobal(Offset.zero);
 
-    final spaceBelow =
-        screenHeight -
-            (position.dy + size.height);
+    final spaceBelow = screenHeight - (position.dy + size.height);
 
-    final showAbove =
-        spaceBelow < dropdownHeight;
+    final showAbove = spaceBelow < dropdownHeight;
 
     return OverlayPosition(
       width: size.width,
       height: dropdownHeight,
       showAbove: showAbove,
-      offset: showAbove
-          ? Offset(
-        0,
-        -dropdownHeight,
-      )
-          : Offset(
-        0,
-        size.height,
-      ),
+      offset: showAbove ? Offset(0, -dropdownHeight) : Offset(0, size.height),
     );
   }
 }

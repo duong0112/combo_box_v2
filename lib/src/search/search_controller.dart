@@ -1,34 +1,21 @@
 import '../core/debounce.dart';
+import '../models/combo_box_item_model.dart';
 import 'search_engine.dart';
 
-class SearchControllerCustom<T> {
+class SearchControllerCustom {
   SearchControllerCustom({
     required this.engine,
-    Duration debounceDuration =
-    const Duration(
-      milliseconds: 300,
-    ),
-  }) : _debounce = Debounce(
-    duration:
-    debounceDuration,
-  );
+    Duration debounceDuration = const Duration(milliseconds: 300),
+  }) : _debounce = Debounce(duration: debounceDuration);
 
-  final SearchEngine<T> engine;
+  final SearchEngine engine;
 
   final Debounce _debounce;
 
-  Future<void> search({
-    required String keyword,
-    required Function(
-        List<T> result,
-        ) onResult,
-  }) async {
+  Future<void> search(
+      {required String keyword, required List<ComboBoxItemModel> items, required Function(List<ComboBoxItemModel> result) onResult}) async {
     _debounce.run(() async {
-      final result =
-      await engine.search(
-        keyword,
-      );
-
+      final result = await engine.search(keyword);
       onResult(result);
     });
   }

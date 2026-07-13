@@ -4,6 +4,7 @@ import '../controllers/single_select_controller.dart';
 import '../core/combo_box_state.dart';
 import '../keyboard/keyboard_handler.dart';
 import '../keyboard/keyboard_navigation.dart';
+import '../models/combo_box_item_model.dart';
 import '../models/typedefs.dart';
 import '../overlay/combo_box_overlay.dart';
 import '../search/search_controller.dart';
@@ -11,167 +12,153 @@ import '../search/local_search.dart';
 import 'combo_box_input.dart';
 import 'combo_box_list.dart';
 
-class ComboBox<T> extends StatefulWidget {
+class ComboBox extends StatefulWidget {
   const ComboBox({
     super.key,
     required this.items,
     required this.displayText,
+    this.valueSelected,
+    this.textStyle,
+    this.textStyleSelected,
+    this.bgColorSelected,
     this.onChanged,
     this.itemBuilder,
     this.hintText = 'Select',
+    this.border,
+    this.borderFocus,
+    this.heightItem = 48,
+    this.numberItemShow = 5,
   });
 
-  final List<T> items;
+  final List<ComboBoxItemModel> items;
 
-  final DisplayText<T> displayText;
+  final DisplayText<ComboBoxItemModel> displayText;
 
-  final ValueChanged<T?>? onChanged;
+  final ValueChanged<ComboBoxItemModel?>? onChanged;
 
-  final ItemBuilder<T>? itemBuilder;
+  final ItemBuilder<ComboBoxItemModel>? itemBuilder;
 
   final String hintText;
 
+  final TextStyle? textStyle;
+
+  final TextStyle? textStyleSelected;
+
+  final Color? bgColorSelected;
+
+  final int? valueSelected;
+
+  final InputBorder? border;
+
+  final InputBorder? borderFocus;
+
+  final double heightItem;
+
+  final int numberItemShow;
+
   @override
-  State<ComboBox<T>> createState() =>
-      _ComboBoxState<T>();
+  State<ComboBox> createState() => _ComboBoxState();
 }
 
-class _ComboBoxState<T>
-    extends State<ComboBox<T>> {
-  late ComboBoxState<T> state;
+class _ComboBoxState extends State<ComboBox> {
+  late ComboBoxState state;
 
-  late SearchControllerCustom<T>
-  searchController;
+  late SearchControllerCustom searchController;
 
-  final navigation =
-  KeyboardNavigation();
+  final navigation = KeyboardNavigation();
 
-  final controller =
-  SingleSelectController<T>();
+  final controller = SingleSelectController();
 
-  late KeyboardHandler<T>
-  keyboardHandler;
+  late KeyboardHandler keyboardHandler;
+
+  int? valueSelected;
 
   @override
   void initState() {
     super.initState();
 
-    state = ComboBoxState<T>();
+    state = ComboBoxState();
+    final engine = LocalSearch(items: widget.items, displayText: widget.displayText);
+    state.focusNode.addListener(() {
+      if (state.focusNode.hasFocus) {
+        _openDropdown();
+      }
+    });
+    valueSelected = widget.valueSelected;
+    state.filteredItems = List.from(widget.items);
 
-    state.filteredItems =
-        List.from(widget.items);
+    searchController = SearchControllerCustom(engine: engine);
 
-    searchController =
-        SearchControllerCustom<T>(
-          engine: LocalSearch<T>(
-            items: widget.items,
-            displayText:
-            widget.displayText,
-          ),
-        );
+    state.textController.addListener(() => _search(engine));
 
-    state.textController
-        .addListener(_search);
-
-    keyboardHandler =
-        KeyboardHandler<T>(
-          navigation: navigation,
-          items: () =>
-          state.filteredItems,
-          scrollController:
-          state.scrollController,
-          onSelected:
-          _selectItem,
-          onClose:
-          _closeDropdown,
-          onRefresh: () {
-            state.overlayManager
-                .rebuild();
-          },
-        );
-  }
-
-  Future<void> _search() async {
-    await searchController.search(
-      keyword:
-      state.textController.text,
-      onResult: (result) {
-        state.filteredItems =
-            result;
-
-        if (mounted) {
-          setState(() {});
-        }
-
-        state.overlayManager
-            .rebuild();
+    keyboardHandler = KeyboardHandler(
+      navigation: navigation,
+      items: () => state.filteredItems,
+      scrollController: state.scrollController,
+      onSelected: _selectItem,
+      onClose: _closeDropdown,
+      onRefresh: () {
+        state.overlayManager.rebuild();
       },
     );
   }
 
+  Future<void> _search(LocalSearch engine) async {
+    state.filteredItems = await engine.search(state.textController.text);
+    if (mounted) {
+      setState(() {});
+      state.overlayManager.rebuild();
+    }
+  }
+
   void _openDropdown() {
-    if (state.overlayManager
-        .isShowing) {
+    if (state.overlayManager.isShowing) {
       return;
     }
 
-    final renderBox =
-    context.findRenderObject()
-    as RenderBox;
+    final renderBox = context.findRenderObject() as RenderBox;
 
-    final overlay =
-    ComboBoxOverlay(
+    final overlay = ComboBoxOverlay(
       context: context,
-      layerLink:
-      state.layerLink,
-      overlayManager:
-      state.overlayManager,
+      layerLink: state.layerLink,
+      overlayManager: state.overlayManager,
     );
 
-    final entry =
-    overlay.create(
+    final entry = overlay.create(
       target: renderBox,
-      child: SizedBox(
-        height: 300,
-        child:
-        ComboBoxList<T>(
-          items:
-          state.filteredItems,
-          displayText:
-          widget.displayText,
-          highlightedIndex:
-          navigation
-              .highlightedIndex,
-          selectedItem:
-          controller.value,
-          itemBuilder:
-          widget.itemBuilder,
-          onSelected:
-          _selectItem,
-          scrollController:
-          state
-              .scrollController,
-        ),
-      ),
+      height: widget.heightItem * widget.numberItemShow,
+      overlayBuilder: () {
+        return ComboBoxList(
+          items: state.filteredItems,
+          displayText: widget.displayText,
+          textStyle: widget.textStyle,
+          textStyleSelected: widget.textStyleSelected,
+          highlightedIndex: navigation.highlightedIndex,
+          bgColorSelected: widget.bgColorSelected,
+          valueSelected: valueSelected,
+          itemBuilder: widget.itemBuilder,
+          onSelected: _selectItem,
+          scrollController: state.scrollController,
+          heightItem: widget.heightItem,
+        );
+      },
     );
 
-    state.overlayManager.show(
-      context,
-      entry,
-    );
+    state.overlayManager.show(context, entry);
   }
 
   void _closeDropdown() {
     state.overlayManager.hide();
   }
 
-  void _selectItem(T item) {
+  void _selectItem(ComboBoxItemModel item) {
     controller.select(item);
 
     widget.onChanged?.call(item);
 
-    state.textController.text =
-        widget.displayText(item);
+    state.textController.text = widget.displayText(item);
+
+    valueSelected = item.value;
 
     _closeDropdown();
 
@@ -181,25 +168,17 @@ class _ComboBoxState<T>
   }
 
   @override
-  Widget build(
-      BuildContext context,
-      ) {
+  Widget build(BuildContext context) {
     return Focus(
-      onKeyEvent:
-      keyboardHandler.handle,
-      child:
-      CompositedTransformTarget(
-        link:
-        state.layerLink,
+      onKeyEvent: keyboardHandler.handle,
+      child: CompositedTransformTarget(
+        link: state.layerLink,
         child: ComboBoxInput(
-          controller:
-          state.textController,
-          focusNode:
-          state.focusNode,
-          hintText:
-          widget.hintText,
-          onTap:
-          _openDropdown,
+          controller: state.textController,
+          focusNode: state.focusNode,
+          hintText: widget.hintText,
+          border: widget.border,
+          borderFocus: widget.borderFocus,
         ),
       ),
     );

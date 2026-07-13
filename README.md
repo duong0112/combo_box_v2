@@ -22,7 +22,35 @@ and the Flutter guide for
 to `/example` folder.
 
 ```dart
-const like = 'sample';
+Widget exampleComboBox(BuildContext context) {
+  return ComboBox(
+    items: [
+      ComboBoxItemModel(value: 1, label: "AAA"),
+      ComboBoxItemModel(value: 2, label: "BBB"),
+      ComboBoxItemModel(value: 3, label: "CCC"),
+      ComboBoxItemModel(value: 4, label: "DDD"),
+    ],
+    valueSelected: valueSelected,
+    textStyle: TextStyle(color: Colors.black, fontSize: 16),
+    textStyleSelected: TextStyle(color: Colors.blue, fontSize: 16),
+    displayText: (item) {
+      return "${item.value}-${item.label}";
+    },
+    heightItem: 50,
+    numberItemShow: 4,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide(color: Colors.blue, width: 2.0, style: BorderStyle.solid, strokeAlign: 1),
+    ),
+    borderFocus: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide(color: Colors.red, width: 2.0, style: BorderStyle.solid, strokeAlign: 1),
+    ),
+    onChanged: (item) {
+      valueSelected = item?.value;
+    },
+  );
+}
 ```
 
 ## Additional information

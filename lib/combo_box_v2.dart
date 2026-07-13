@@ -12,7 +12,6 @@ export 'src/core/overlay_manager.dart';
 export 'src/core/debounce.dart';
 export 'src/search/search_engine.dart';
 export 'src/search/local_search.dart';
-export 'src/search/async_search.dart';
 export 'src/search/search_controller.dart';
 
 export 'src/keyboard/keyboard_navigation.dart';

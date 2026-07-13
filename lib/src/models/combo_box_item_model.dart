@@ -1,19 +1,16 @@
-class ComboBoxItemModel<T> {
-  final T value;
+class ComboBoxItemModel{
+  final int value;
 
   final String label;
-
-  final bool enabled;
 
   const ComboBoxItemModel({
     required this.value,
     required this.label,
-    this.enabled = true,
   });
 
   @override
-  bool operator ==(Object other) {
-    if (other is! ComboBoxItemModel<T>) {
+  bool operator == (Object other) {
+    if (other is! ComboBoxItemModel) {
       return false;
     }
 

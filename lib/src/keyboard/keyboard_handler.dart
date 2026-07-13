@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../models/combo_box_item_model.dart';
 import 'keyboard_navigation.dart';
 import 'keyboard_scroll.dart';
 
-class KeyboardHandler<T> {
+class KeyboardHandler {
   KeyboardHandler({
     required this.navigation,
     required this.items,
@@ -16,11 +17,11 @@ class KeyboardHandler<T> {
 
   final KeyboardNavigation navigation;
 
-  final List<T> Function() items;
+  final List<ComboBoxItemModel> Function() items;
 
   final ScrollController scrollController;
 
-  final ValueChanged<T> onSelected;
+  final ValueChanged<ComboBoxItemModel> onSelected;
 
   final VoidCallback onClose;
 

@@ -4,11 +4,7 @@ import '../core/overlay_manager.dart';
 import '../overlay/overlay_position.dart';
 
 class ComboBoxOverlay {
-  ComboBoxOverlay({
-    required this.context,
-    required this.layerLink,
-    required this.overlayManager,
-  });
+  ComboBoxOverlay({required this.context, required this.layerLink, required this.overlayManager});
 
   final BuildContext context;
 
@@ -16,17 +12,8 @@ class ComboBoxOverlay {
 
   final OverlayManager overlayManager;
 
-  OverlayEntry create({
-    required Widget child,
-    required RenderBox target,
-    double height = 300,
-  }) {
-    final position =
-    OverlayPosition.calculate(
-      context: context,
-      target: target,
-      dropdownHeight: height,
-    );
+  OverlayEntry create({required Widget child, required RenderBox target, double height = 300}) {
+    final position = OverlayPosition.calculate(context: context, target: target, dropdownHeight: height);
 
     return OverlayEntry(
       builder: (_) {
@@ -34,13 +21,9 @@ class ComboBoxOverlay {
           children: [
             Positioned.fill(
               child: GestureDetector(
-                behavior:
-                HitTestBehavior
-                    .translucent,
+                behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  FocusManager.instance
-                      .primaryFocus
-                      ?.unfocus();
+                  FocusManager.instance.primaryFocus?.unfocus();
 
                   overlayManager.hide();
                 },
@@ -52,17 +35,8 @@ class ComboBoxOverlay {
               offset: position.offset,
               child: Material(
                 elevation: 6,
-                borderRadius:
-                BorderRadius.circular(
-                  8,
-                ),
-                child: SizedBox(
-                  width:
-                  position.width,
-                  height:
-                  position.height,
-                  child: child,
-                ),
+                borderRadius: BorderRadius.circular(8),
+                child: SizedBox(width: position.width, height: position.height, child: child),
               ),
             ),
           ],

@@ -17,7 +17,7 @@ class ComboBoxOverlay {
   final OverlayManager overlayManager;
 
   OverlayEntry create({
-    required Widget child,
+    required Widget Function() overlayBuilder,
     required RenderBox target,
     double height = 300,
   }) {
@@ -61,7 +61,7 @@ class ComboBoxOverlay {
                   position.width,
                   height:
                   position.height,
-                  child: child,
+                  child: overlayBuilder(),
                 ),
               ),
             ),

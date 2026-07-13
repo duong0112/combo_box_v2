@@ -1,21 +1,12 @@
 import 'package:flutter/material.dart';
 
-typedef DisplayText<T> = String Function(T item);
+typedef DisplayText<ComboBoxItemModel> = String Function(ComboBoxItemModel item);
 
-typedef ItemBuilder<T> = Widget Function(
-  BuildContext context,
-  T item,
-  bool selected,
-);
+typedef ItemBuilder<ComboBoxItemModel> =
+    Widget Function(BuildContext context, ComboBoxItemModel item, bool selected);
 
-typedef AsyncSearch<T> = Future<List<T>> Function(
-  String keyword,
-);
+typedef AsyncSearch<ComboBoxItemModel> = Future<List<ComboBoxItemModel>> Function(String keyword);
 
-typedef OnChanged<T> = void Function(
-  T? value,
-);
+typedef OnChanged<ComboBoxItemModel> = void Function(ComboBoxItemModel? value);
 
-typedef OnMultiChanged<T> = void Function(
-  List<T> values,
-);
+typedef OnMultiChanged<ComboBoxItemModel> = void Function(List<ComboBoxItemModel> values);
